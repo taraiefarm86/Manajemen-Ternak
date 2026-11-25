@@ -1,0 +1,53 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: web-src
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Siapkan folder web untuk APK
+        run: |
+          mkdir -p app-build/www
+          cp -r web-src/* app-build/www/ || true
+
+      - name: Install Capacitor & buat proyek Android
+        working-directory: app-build
+        run: |
+          npm init -y
+          npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8
+          npx cap init "Manajemen Ternak" "com.taraiefarm.manajementernak" --web-dir www
+          npx cap add android
+          npx cap sync android
+
+      - name: Build Debug APK
+        working-directory: app-build/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload file APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Manajemen-Ternak-APK
+          path: app-build/android/app/build/outputs/apk/debug/app-debug.apk
