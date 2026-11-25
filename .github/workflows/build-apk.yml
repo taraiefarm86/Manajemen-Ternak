@@ -36,7 +36,7 @@ jobs:
         run: |
           npm init -y
           npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8
-          npx cap init "Manajemen Ternak" "com.taraiefarm.manajementernak" --web-dir www
+          npx cap init "Tarai Efarm" "com.taraiefarm.app" --web-dir www
           npx cap add android
           npx cap sync android
 
@@ -45,9 +45,10 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
+          cp app/build/outputs/apk/debug/app-debug.apk "Tarai-Efarm.apk"
 
       - name: Upload file APK
         uses: actions/upload-artifact@v4
         with:
-          name: Manajemen-Ternak-APK
-          path: app-build/android/app/build/outputs/apk/debug/app-debug.apk
+          name: Tarai Efarm APK
+          path: app-build/android/Tarai-Efarm.apk
