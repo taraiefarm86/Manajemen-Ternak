@@ -26,16 +26,25 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Build aplikasi web Vite
+        working-directory: web-src
+        run: |
+          npm install
+          npm run build
+
       - name: Siapkan folder web dan logo
         run: |
           mkdir -p app-build/www
-          cp -r web-src/* app-build/www/ || true
+          cp -r web-src/dist/* app-build/www/
           if [ -f web-src/logo.png ]; then
             mkdir -p app-build/assets
             cp web-src/logo.png app-build/assets/logo.png
           elif [ -f web-src/assets/logo.png ]; then
             mkdir -p app-build/assets
             cp web-src/assets/logo.png app-build/assets/logo.png
+          elif [ -f web-src/src/assets/images/tarai_efarm_logo_1795681084055.jpg ]; then
+            mkdir -p app-build/assets
+            cp web-src/src/assets/images/tarai_efarm_logo_1795681084055.jpg app-build/assets/logo.png
           fi
 
       - name: Install Capacitor & buat proyek Android
